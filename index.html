@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AbsensiEvent DEMO - Sistem Absensi Kampus</title>
     
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
+    </script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js">
+    </script>
     
     <style>
         :root {
@@ -48,9 +50,7 @@
             z-index: 1000;
             animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-            0%,100%{opacity:1} 50%{opacity:0.85}
-        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.85} }
         .demo-banner span {
             background: white;
             color: #ef4444;
@@ -79,14 +79,7 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-        .logo {
-            font-weight: 800;
-            font-size: 1.3rem;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .logo { font-weight: 800; font-size: 1.3rem; color: var(--primary); }
         .badge-demo {
             background: #fef3c7;
             color: #92400e;
@@ -164,14 +157,6 @@
         }
         .tab-btn.active { background: var(--primary); color: white; }
         .tab-btn:hover:not(.active) { background: #f3f4f6; }
-        .badge-locked {
-            font-size: 0.7rem;
-            background: #fef3c7;
-            color: #92400e;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-left: 4px;
-        }
         
         .panel { display: none; animation: fadeIn 0.3s ease; }
         .panel.active { display: block; }
@@ -188,9 +173,6 @@
         .card h3 {
             margin-bottom: 16px;
             font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             padding-bottom: 12px;
             border-bottom: 2px solid #f3f4f6;
         }
@@ -234,7 +216,6 @@
         .btn-primary:hover { background: var(--primary-dark); }
         .btn-success { background: var(--success); color: white; }
         .btn-outline { background: white; border: 2px solid var(--border); }
-        .btn-outline:hover { border-color: var(--primary); }
         .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
@@ -244,7 +225,6 @@
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 600px; }
         table th, table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
         table th { background: #f9fafb; font-weight: 700; position: sticky; top: 0; }
-        table tbody tr:hover { background: #f9fafb; }
         
         .status-hadir { display: inline-block; padding: 3px 10px; background: #d1fae5; color: #065f46; border-radius: 12px; font-weight: 600; font-size: 0.75rem; }
         .status-belum { display: inline-block; padding: 3px 10px; background: #fee2e2; color: #991b1b; border-radius: 12px; font-weight: 600; font-size: 0.75rem; }
@@ -293,7 +273,6 @@
             display: inline-block;
             margin-top: 16px;
         }
-        .btn-buy:hover { background: #fbbf24; }
         
         .toast {
             position: fixed;
@@ -343,12 +322,10 @@
 </head>
 <body>
 
-    <!-- DEMO BANNER -->
     <div class="demo-banner">
         ⚠️ <span>DEMO VERSION</span> Maksimal <span id="banner-max">5</span> Peserta • Scan <span id="banner-scan">3</span>× • Export <span>🔒</span>
     </div>
 
-    <!-- HEADER -->
     <div class="header">
         <div class="header-inner">
             <div class="logo">📋 AbsensiEvent<span class="badge-demo">DEMO</span></div>
@@ -361,7 +338,6 @@
 
     <div class="container">
         
-        <!-- STATS -->
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-number" id="stat-total">0</div>
@@ -379,15 +355,13 @@
             </div>
         </div>
 
-        <!-- TABS -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="tab-register">📝 Pendaftaran</button>
             <button class="tab-btn" data-tab="tab-qr">📧 QR & Email</button>
-            <button class="tab-btn" data-tab="tab-scan">📷 Scan <span class="badge-locked">3×</span></button>
-            <button class="tab-btn" data-tab="tab-data">📊 Data <span class="badge-locked">🔒</span></button>
+            <button class="tab-btn" data-tab="tab-scan">📷 Scan</button>
+            <button class="tab-btn" data-tab="tab-data">📊 Data</button>
         </div>
 
-        <!-- PANEL: REGISTER -->
         <div class="panel active" id="tab-register">
             <div class="grid-2">
                 <div class="card">
@@ -433,7 +407,6 @@
             </div>
         </div>
 
-        <!-- PANEL: QR -->
         <div class="panel" id="tab-qr">
             <div class="card">
                 <h3>📧 Daftar QR Code Peserta</h3>
@@ -441,14 +414,13 @@
                     <table>
                         <thead><tr><th>Nama</th><th>NIM</th><th>Email</th><th>Jurusan</th><th>QR</th></tr></thead>
                         <tbody id="qr-table-body">
-                            <tr><td colspan="5" style="text-align:center;padding:20px;"><span class="loading"></span> Memuat...</td></tr>
+                            <tr><td colspan="5" style="text-align:center;padding:20px;">Memuat...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- PANEL: SCAN -->
         <div class="panel" id="tab-scan">
             <div class="grid-2">
                 <div class="card">
@@ -476,7 +448,6 @@
             </div>
         </div>
 
-        <!-- PANEL: DATA -->
         <div class="panel" id="tab-data">
             <div class="card">
                 <h3>📊 Data Kehadiran</h3>
@@ -488,14 +459,13 @@
                     <table>
                         <thead><tr><th>No</th><th>Nama</th><th>NIM</th><th>Email</th><th>Jurusan</th><th>Status</th><th>Waktu Hadir</th></tr></thead>
                         <tbody id="attendance-table-body">
-                            <tr><td colspan="7" style="text-align:center;padding:20px;"><span class="loading"></span> Memuat...</td></tr>
+                            <tr><td colspan="7" style="text-align:center;padding:20px;">Memuat...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- UPGRADE CTA -->
         <div class="upgrade-cta" id="upgrade-section">
             <h2>🚀 Upgrade ke <strong>Full Version PRO</strong></h2>
             <div class="price">Rp 299.000</div>
@@ -510,84 +480,78 @@
                 <li>✅ Buku Panduan Instalasi</li>
                 <li>✅ Support 1 Bulan</li>
             </ul>
-            <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20beli%20AbsensiEvent%20PRO" target="_blank" class="btn-buy">💬 Order via WhatsApp</a>
+            <a href="https://wa.me/6285718004790?text=Halo%2C%20saya%20mau%20beli%20AbsensiEvent%20PRO" target="_blank" class="btn-buy">💬 Order via WhatsApp</a>
         </div>
     </div>
 
-    <div class="footer">
-        🚀 AbsensiEvent DEMO v1.0 • © 2026 HimpunanTech
-    </div>
+    <div class="footer">🚀 AbsensiEvent DEMO v1.0 • © 2026 Kang Adhi</div>
 
-    <!-- ===== SCRIPT ===== -->
     <script>
-    // ===== GANTI dengan URL Web App Anda =====
-    const API_BASE_URL = 'https://script.google.com/macros/s/AKfycby1SrEfmc1LZc6pYoXHwO2WtEzLRY_0tOXOMIvDVIRDReT5tzkQKkbvuzaPT35StskE/exec';
-    const MAX_PESERTA = 5;
-    const MAX_SCAN = 3;
+    // ===== GANTI DENGAN URL HASIL DEPLOY BARU =====
+    var API_BASE_URL = 'https://script.google.com/macros/s/AKfycby1SrEfmc1LZc6pYoXHwO2WtEzLRY_0tOXOMIvDVIRDReT5tzkQKkbvuzaPT35StskE/exec';
     
-    let pesertaData = [];
-    let scanCount = 0;
-    let html5QrCode = null;
-    let scannerActive = false;
+    var pesertaData = [];
+    var scanCount = 0;
+    var html5QrCode = null;
+    var scannerActive = false;
 
-    // ===== TOAST =====
     function showToast(msg, type) {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
+        var container = document.getElementById('toast-container');
+        var toast = document.createElement('div');
         toast.className = 'toast toast-' + (type || 'info');
         toast.textContent = msg;
         container.appendChild(toast);
-        setTimeout(function(){ toast.style.opacity='0'; toast.style.transition='0.3s'; setTimeout(function(){ toast.remove(); },300); }, 3500);
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            toast.style.transition = '0.3s';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3500);
     }
 
-   // ===== API CALL - DENGAN NO-CORS MODE =====
-async function callAPI(action, params, method) {
-    method = method || 'GET';
-    try {
-        var url = API_BASE_URL + '?action=' + encodeURIComponent(action);
-        
-        if (method === 'GET' && params) {
-            Object.keys(params).forEach(function(key) {
-                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-            });
+    function callAPI(action, params, method) {
+        return new Promise(function(resolve) {
+            method = method || 'GET';
+            var url = API_BASE_URL + '?action=' + encodeURIComponent(action);
             
-            // GUNAKAN mode: 'no-cors' untuk GET request
-            var response = await fetch(url, {
-                method: 'GET',
-                mode: 'no-cors',
-                headers: {
-                    'Accept': 'application/json'
+            var xhr = new XMLHttpRequest();
+            
+            if (method === 'GET' && params) {
+                var keys = Object.keys(params);
+                for (var k = 0; k < keys.length; k++) {
+                    url += '&' + encodeURIComponent(keys[k]) + '=' + encodeURIComponent(params[keys[k]]);
                 }
-            });
-            
-            // Karena no-cors, kita parse manual dengan response.text()
-            var text = await response.text();
-            try {
-                return JSON.parse(text);
-            } catch(e) {
-                // Fallback: coba fetch ulang dengan mode cors
-                var response2 = await fetch(url);
-                return await response2.json();
+                xhr.open('GET', url, true);
+                xhr.send();
+            } else {
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify(params || {}));
             }
-        } else {
-            // POST request
-            var response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(params || {})
-            });
-            return await response.json();
-        }
-    } catch(error) {
-        console.error('API Error:', error);
-        showToast('Gagal terhubung ke server. Coba refresh.', 'error');
-        return { success: false, error: error.toString() };
+            
+            xhr.onload = function() {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    resolve(data);
+                } catch(e) {
+                    resolve({ success: false, error: 'Invalid response' });
+                }
+            };
+            
+            xhr.onerror = function() {
+                resolve({ success: false, error: 'Gagal terhubung ke server. Coba refresh.' });
+            };
+            
+            xhr.ontimeout = function() {
+                resolve({ success: false, error: 'Koneksi timeout. Coba lagi.' });
+            };
+            
+            xhr.timeout = 15000;
+        });
     }
-}
 
-    // ===== LOAD STATS =====
     async function loadStats() {
         var result = await callAPI('getStats');
+        
         if (result.success && result.stats) {
             document.getElementById('stat-total').textContent = result.stats.total || 0;
             document.getElementById('stat-hadir').textContent = result.stats.hadir || 0;
@@ -600,24 +564,33 @@ async function callAPI(action, params, method) {
             
             if (result.stats.peserta_tersisa <= 0) {
                 document.getElementById('limit-peserta-warning').style.display = 'block';
+            } else {
+                document.getElementById('limit-peserta-warning').style.display = 'none';
             }
+            
             if (result.stats.scan_tersisa <= 0) {
                 document.getElementById('limit-scan-warning').style.display = 'block';
+            } else {
+                document.getElementById('limit-scan-warning').style.display = 'none';
             }
+        } else {
+            console.error('Stats error:', result);
+            showToast('Gagal memuat data. Coba refresh.', 'error');
         }
     }
 
-    // ===== LOAD PESERTA =====
     async function loadPeserta() {
         var result = await callAPI('getPeserta');
+        
         if (result.success) {
             pesertaData = result.peserta || [];
             refreshQRTable();
             refreshAttendanceTable();
+        } else {
+            console.error('Peserta error:', result);
         }
     }
 
-    // ===== TABS =====
     document.querySelectorAll('.tab-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
@@ -634,15 +607,13 @@ async function callAPI(action, params, method) {
         });
     });
 
-    // ===== REGISTRATION =====
     document.getElementById('registration-form').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Cek limit dulu
         var limitCheck = await callAPI('checkLimit', { type: 'peserta' });
         if (limitCheck.limit_reached) {
             document.getElementById('limit-peserta-warning').style.display = 'block';
-            showToast('Batas Demo: Maksimal ' + limitCheck.max + ' peserta!', 'warning');
+            showToast('Batas Demo: Maksimal 5 peserta!', 'warning');
             return;
         }
         
@@ -661,10 +632,7 @@ async function callAPI(action, params, method) {
         btn.innerHTML = '<span class="loading"></span> Mendaftarkan...';
         
         var result = await callAPI('register', {
-            nama: nama,
-            nim: nim,
-            email: email,
-            jurusan: jurusan
+            nama: nama, nim: nim, email: email, jurusan: jurusan
         }, 'POST');
         
         btn.disabled = false;
@@ -682,7 +650,6 @@ async function callAPI(action, params, method) {
             });
             
             this.reset();
-            document.getElementById('limit-peserta-warning').style.display = 'none';
             showToast(result.message, 'success');
             loadStats();
             loadPeserta();
@@ -695,7 +662,6 @@ async function callAPI(action, params, method) {
         }
     });
 
-    // ===== QR TABLE =====
     function refreshQRTable() {
         var tbody = document.getElementById('qr-table-body');
         if (pesertaData.length === 0) {
@@ -714,12 +680,21 @@ async function callAPI(action, params, method) {
         
         tbody.querySelectorAll('.btn-lihat-qr').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                showQRModal(this.dataset.qr, this.dataset.nama);
+                var overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:999;display:flex;align-items:center;justify-content:center;';
+                var modal = document.createElement('div');
+                modal.style.cssText = 'background:white;border-radius:16px;padding:24px;text-align:center;max-width:350px;width:90%;';
+                modal.innerHTML = '<h3>QR Code - ' + this.dataset.nama + '</h3><div id="modal-qr"></div><button id="modal-close" style="margin-top:12px;padding:10px 24px;background:#6366f1;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Tutup</button>';
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+                new QRCode(document.getElementById('modal-qr'), { text: this.dataset.qr, width: 180, height: 180 });
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay || e.target.id === 'modal-close') overlay.remove();
+                });
             });
         });
     }
 
-    // ===== ATTENDANCE TABLE =====
     function refreshAttendanceTable() {
         var tbody = document.getElementById('attendance-table-body');
         if (pesertaData.length === 0) {
@@ -730,7 +705,7 @@ async function callAPI(action, params, method) {
             var statusHTML = p.status === 'hadir' ? 
                 '<span class="status-hadir">✅ Hadir</span>' : 
                 '<span class="status-belum">⏳ Belum</span>';
-            var waktuHadir = p.waktu_hadir ? new Date(p.waktu_hadir).toLocaleString('id-ID') : '-';
+            var waktu = p.waktu_hadir ? new Date(p.waktu_hadir).toLocaleString('id-ID') : '-';
             return '<tr>' +
                 '<td>' + (i+1) + '</td>' +
                 '<td><strong>' + p.nama + '</strong></td>' +
@@ -738,34 +713,16 @@ async function callAPI(action, params, method) {
                 '<td>' + p.email + '</td>' +
                 '<td>' + (p.jurusan || '-') + '</td>' +
                 '<td>' + statusHTML + '</td>' +
-                '<td>' + waktuHadir + '</td>' +
+                '<td>' + waktu + '</td>' +
                 '</tr>';
         }).join('');
     }
 
-    // ===== QR MODAL =====
-    function showQRModal(qrData, nama) {
-        var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:999;display:flex;align-items:center;justify-content:center;';
-        var modal = document.createElement('div');
-        modal.style.cssText = 'background:white;border-radius:16px;padding:24px;text-align:center;max-width:350px;width:90%;';
-        modal.innerHTML = '<h3>QR Code - ' + nama + '</h3><div id="modal-qr"></div><button id="modal-close" style="margin-top:12px;padding:10px 24px;background:#6366f1;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Tutup</button>';
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-        
-        new QRCode(document.getElementById('modal-qr'), { text: qrData, width: 180, height: 180 });
-        
-        overlay.addEventListener('click', function(e) {
-            if (e.target === overlay || e.target.id === 'modal-close') overlay.remove();
-        });
-    }
-
-    // ===== SCANNER =====
     function startScanner() {
         if (scannerActive) return;
-        if (scanCount >= MAX_SCAN) {
+        if (scanCount >= 3) {
             document.getElementById('limit-scan-warning').style.display = 'block';
-            showToast('Batas Demo: Maksimal ' + MAX_SCAN + 'x scan!', 'warning');
+            showToast('Batas Demo: Maksimal 3x scan!', 'warning');
             return;
         }
         document.getElementById('reader').style.display = 'block';
@@ -779,8 +736,9 @@ async function callAPI(action, params, method) {
             scannerActive = true;
             document.getElementById('btn-start-scanner').style.display = 'none';
             document.getElementById('btn-stop-scanner').style.display = 'inline-block';
-        }).catch(function() {
-            showToast('Gagal akses kamera. Pastikan HTTPS.', 'error');
+        }).catch(function(err) {
+            console.error(err);
+            showToast('Gagal akses kamera. Pastikan izin diberikan.', 'error');
         });
     }
 
@@ -805,18 +763,11 @@ async function callAPI(action, params, method) {
         if (result.success) {
             resultDiv.innerHTML = '<div class="scan-result success">✅ ' + result.message + '</div>';
             showToast(result.message, 'success');
-            scanCount = result.scan_info ? result.scan_info.current : scanCount + 1;
+            if (result.scan_info) scanCount = result.scan_info.current;
             loadStats();
             loadPeserta();
-            
-            if (result.scan_info && result.scan_info.sisa <= 0) {
-                document.getElementById('limit-scan-warning').style.display = 'block';
-            }
         } else {
-            resultDiv.innerHTML = '<div class="scan-result error">❌ ' + (result.error || 'QR tidak valid') + '</div>';
-            if (result.limit_reached) {
-                document.getElementById('limit-scan-warning').style.display = 'block';
-            }
+            resultDiv.innerHTML = '<div class="scan-result error">❌ ' + (result.error || 'Gagal scan') + '</div>';
         }
         setTimeout(function() { resultDiv.innerHTML = ''; }, 4000);
     }
@@ -824,21 +775,14 @@ async function callAPI(action, params, method) {
     document.getElementById('btn-start-scanner').addEventListener('click', startScanner);
     document.getElementById('btn-stop-scanner').addEventListener('click', stopScanner);
 
-    // ===== MANUAL HADIR =====
     document.getElementById('btn-manual-hadir').addEventListener('click', async function() {
         var nim = document.getElementById('manual-nim').value.trim();
         var resultDiv = document.getElementById('manual-result');
-        
-        if (!nim) {
-            resultDiv.innerHTML = '<div class="scan-result error">Masukkan NIM dulu.</div>';
-            return;
-        }
+        if (!nim) { resultDiv.innerHTML = '<div class="scan-result error">Masukkan NIM!</div>'; return; }
         
         this.disabled = true;
         this.innerHTML = '<span class="loading"></span> Memproses...';
-        
         var result = await callAPI('manualHadir', { nim: nim }, 'POST');
-        
         this.disabled = false;
         this.innerHTML = '✅ Tandai Hadir';
         
@@ -849,18 +793,16 @@ async function callAPI(action, params, method) {
             loadStats();
             loadPeserta();
         } else {
-            resultDiv.innerHTML = '<div class="scan-result error">❌ ' + (result.error || 'Gagal') + '</div>';
+            resultDiv.innerHTML = '<div class="scan-result error">❌ ' + result.error + '</div>';
         }
         setTimeout(function() { resultDiv.innerHTML = ''; }, 3000);
     });
 
-    // ===== EXPORT (LOCKED) =====
     document.getElementById('btn-export-csv').addEventListener('click', function() {
-        showToast('🔒 Export CSV hanya di versi PRO. Upgrade sekarang!', 'warning');
+        showToast('🔒 Export CSV hanya di versi PRO!', 'warning');
         document.getElementById('upgrade-section').scrollIntoView({ behavior: 'smooth' });
     });
 
-    // ===== REFRESH =====
     document.getElementById('btn-refresh-data').addEventListener('click', async function() {
         this.disabled = true;
         this.innerHTML = '<span class="loading"></span> Refreshing...';
@@ -870,15 +812,12 @@ async function callAPI(action, params, method) {
         this.innerHTML = '🔄 Refresh';
     });
 
-    // ===== INIT =====
-    async function init() {
-        document.getElementById('reader').style.display = 'none';
-        await loadStats();
-        await loadPeserta();
-        console.log('🚀 AbsensiEvent DEMO ready!');
-    }
-
-    init();
+    // Init
+    document.getElementById('reader').style.display = 'none';
+    loadStats();
+    loadPeserta();
+    console.log('🚀 AbsensiEvent DEMO ready!');
+    console.log('📡 API:', API_BASE_URL);
     window.addEventListener('beforeunload', function() { stopScanner(); });
     </script>
 </body>
