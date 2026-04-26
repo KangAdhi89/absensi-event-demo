@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbsensiEvent DEMO - Sistem Absensi Kampus</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --bg: #fafafa;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #111827;
+            --text-light: #6b7280;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(180deg, #fafafa 0%, #f0f0ff 100%);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .demo-banner {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,100%{opacity:1} 50%{opacity:0.85}
+        }
+        .demo-banner span {
+            background: white;
+            color: #ef4444;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin: 0 6px;
+            font-size: 0.85rem;
+        }
+        
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 42px;
+            z-index: 99;
+            box-shadow: var(--shadow);
+        }
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .badge-demo {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border: 1px solid #fcd34d;
+        }
+        .btn-upgrade {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+        }
+        .btn-upgrade:hover { transform: scale(1.05); }
+        
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        @media(max-width:768px){ .stats-row{grid-template-columns:1fr} }
+        
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .stat-card .stat-number { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .stat-card .stat-label { font-size: 0.8rem; color: var(--text-light); font-weight: 600; }
+        .limit-info { font-size: 0.75rem; color: #f59e0b; margin-top: 4px; }
+        
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 6px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-btn:hover:not(.active) { background: #f3f4f6; }
+        .badge-locked {
+            font-size: 0.7rem;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+        
+        .panel { display: none; animation: fadeIn 0.3s ease; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media(max-width:768px){ .grid-2{grid-template-columns:1fr} }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: 0.3s;
+            background: #f9fafb;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+            background: white;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary { background: var(--primary); color: white; width: 100%; justify-content: center; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-outline { background: white; border: 2px solid var(--border); }
+        .btn-outline:hover { border-color: var(--primary); }
+        .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .qr-display { text-align: center; padding: 16px; background: white; border-radius: var(--radius-sm); border: 2px dashed var(--border); }
+        
+        .table-wrapper { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 600px; }
+        table th, table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        table th { background: #f9fafb; font-weight: 700; position: sticky; top: 0; }
+        table tbody tr:hover { background: #f9fafb; }
+        
+        .status-hadir { display: inline-block; padding: 3px 10px; background: #d1fae5; color: #065f46; border-radius: 12px; font-weight: 600; font-size: 0.75rem; }
+        .status-belum { display: inline-block; padding: 3px 10px; background: #fee2e2; color: #991b1b; border-radius: 12px; font-weight: 600; font-size: 0.75rem; }
+        
+        #reader { max-width: 400px; margin: 0 auto; border-radius: var(--radius-sm); overflow: hidden; border: 2px solid var(--border); }
+        
+        .scan-result { padding: 12px; border-radius: 8px; margin-top: 12px; font-weight: 600; text-align: center; }
+        .scan-result.success { background: #d1fae5; color: #065f46; border: 1px solid #34d399; }
+        .scan-result.error { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+        
+        .limit-notice {
+            background: #fef3c7;
+            border: 2px solid #fcd34d;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+            margin-top: 16px;
+            font-weight: 600;
+            color: #92400e;
+            display: none;
+        }
+        
+        .upgrade-cta {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: white;
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            margin-top: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+        .upgrade-cta h2 { font-size: 1.5rem; margin-bottom: 8px; }
+        .upgrade-cta .price { font-size: 2.5rem; font-weight: 800; color: #fbbf24; }
+        .upgrade-cta .features { list-style: none; padding: 16px 0; text-align: left; max-width: 400px; margin: 0 auto; }
+        .upgrade-cta .features li { padding: 6px 0; display: flex; align-items: center; gap: 8px; }
+        .btn-buy {
+            background: #f59e0b;
+            color: #1e1b4b;
+            padding: 14px 32px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 16px;
+        }
+        .btn-buy:hover { background: #fbbf24; }
+        
+        .toast {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            font-size: 0.9rem;
+            max-width: 350px;
+        }
+        .toast-success { background: #10b981; }
+        .toast-error { background: #ef4444; }
+        .toast-warning { background: #f59e0b; color: #1e1b4b; }
+        .toast-info { background: #6366f1; }
+        @keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+        
+        .loading {
+            display: inline-block;
+            width: 20px; height: 20px;
+            border: 3px solid #f3f4f6;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        
+        .watermark {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%) rotate(-25deg);
+            font-size: 6rem;
+            font-weight: 900;
+            color: rgba(0,0,0,0.03);
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
+            user-select: none;
+        }
+        
+        .footer { text-align: center; padding: 20px; color: var(--text-light); font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <!-- DEMO BANNER -->
+    <div class="demo-banner">
+        ⚠️ <span>DEMO VERSION</span> Maksimal <span id="banner-max">5</span> Peserta • Scan <span id="banner-scan">3</span>× • Export <span>🔒</span>
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-inner">
+            <div class="logo">📋 AbsensiEvent<span class="badge-demo">DEMO</span></div>
+            <a href="#upgrade-section" class="btn-upgrade">⭐ UPGRADE PRO - Rp 299K</a>
+        </div>
+    </div>
+
+    <div class="watermark">DEMO</div>
+    <div id="toast-container"></div>
+
+    <div class="container">
+        
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number" id="stat-total">0</div>
+                <div class="stat-label">Total Terdaftar</div>
+                <div class="limit-info">Maks: <span id="limit-peserta">5</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-hadir" style="color:#10b981;">0</div>
+                <div class="stat-label">Hadir</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-scan" style="color:#f59e0b;">0</div>
+                <div class="stat-label">Scan Digunakan</div>
+                <div class="limit-info">Maks: <span id="limit-scan">3</span></div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="tab-register">📝 Pendaftaran</button>
+            <button class="tab-btn" data-tab="tab-qr">📧 QR & Email</button>
+            <button class="tab-btn" data-tab="tab-scan">📷 Scan <span class="badge-locked">3×</span></button>
+            <button class="tab-btn" data-tab="tab-data">📊 Data <span class="badge-locked">🔒</span></button>
+        </div>
+
+        <!-- PANEL: REGISTER -->
+        <div class="panel active" id="tab-register">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>📝 Formulir Pendaftaran (Demo)</h3>
+                    <form id="registration-form">
+                        <div class="form-group">
+                            <label>Nama Lengkap *</label>
+                            <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+                        </div>
+                        <div class="form-group">
+                            <label>NIM / NPM *</label>
+                            <input type="text" id="nim" placeholder="Masukkan NIM" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Aktif *</label>
+                            <input type="email" id="email" placeholder="email@kampus.ac.id" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jurusan / Prodi</label>
+                            <select id="jurusan">
+                                <option value="">-- Pilih --</option>
+                                <option>Teknik Informatika</option>
+                                <option>Sistem Informasi</option>
+                                <option>Teknik Elektro</option>
+                                <option>Manajemen</option>
+                                <option>Akuntansi</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">🚀 Daftar & Generate QR</button>
+                    </form>
+                    <div class="limit-notice" id="limit-peserta-warning">
+                        🔒 <strong>Batas Demo Tercapai!</strong><br>
+                        <a href="#upgrade-section" style="color:#92400e;">Upgrade ke PRO</a>
+                    </div>
+                </div>
+                <div class="card" id="registration-result" style="display:none;">
+                    <h3>✅ Pendaftaran Berhasil!</h3>
+                    <div class="qr-display" id="qr-code-container"></div>
+                    <p style="margin-top:12px;color:var(--text-light);font-size:0.85rem;">
+                        📧 QR Code dikirim ke: <strong id="reg-email-display"></strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: QR -->
+        <div class="panel" id="tab-qr">
+            <div class="card">
+                <h3>📧 Daftar QR Code Peserta</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Nama</th><th>NIM</th><th>Email</th><th>Jurusan</th><th>QR</th></tr></thead>
+                        <tbody id="qr-table-body">
+                            <tr><td colspan="5" style="text-align:center;padding:20px;"><span class="loading"></span> Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: SCAN -->
+        <div class="panel" id="tab-scan">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>📷 Scanner QR (Demo: 3×)</h3>
+                    <div id="reader"></div>
+                    <div id="scan-result"></div>
+                    <div style="margin-top:12px;display:flex;gap:8px;">
+                        <button class="btn btn-success btn-sm" id="btn-start-scanner">▶ Mulai Scanner</button>
+                        <button class="btn btn-outline btn-sm" id="btn-stop-scanner" style="display:none;">⏹ Stop</button>
+                    </div>
+                    <div class="limit-notice" id="limit-scan-warning">
+                        🔒 <strong>Batas Scan Tercapai!</strong><br>
+                        <a href="#upgrade-section" style="color:#92400e;">Upgrade ke PRO</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>✅ Input Manual</h3>
+                    <div class="form-group">
+                        <label>NIM Peserta</label>
+                        <input type="text" id="manual-nim" placeholder="Masukkan NIM">
+                    </div>
+                    <button class="btn btn-success" id="btn-manual-hadir" style="width:100%;">✅ Tandai Hadir</button>
+                    <div id="manual-result" style="margin-top:8px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: DATA -->
+        <div class="panel" id="tab-data">
+            <div class="card">
+                <h3>📊 Data Kehadiran</h3>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                    <button class="btn btn-outline btn-sm" id="btn-export-csv">📥 Export CSV <span style="color:#ef4444;">🔒 PRO</span></button>
+                    <button class="btn btn-outline btn-sm" id="btn-refresh-data">🔄 Refresh</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>No</th><th>Nama</th><th>NIM</th><th>Email</th><th>Jurusan</th><th>Status</th><th>Waktu Hadir</th></tr></thead>
+                        <tbody id="attendance-table-body">
+                            <tr><td colspan="7" style="text-align:center;padding:20px;"><span class="loading"></span> Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- UPGRADE CTA -->
+        <div class="upgrade-cta" id="upgrade-section">
+            <h2>🚀 Upgrade ke <strong>Full Version PRO</strong></h2>
+            <div class="price">Rp 299.000</div>
+            <p style="opacity:0.9;">Sekali bayar, selamanya pakai.</p>
+            <ul class="features">
+                <li>✅ Unlimited Peserta & Scan</li>
+                <li>✅ Export CSV & Cetak PDF</li>
+                <li>✅ Multi-Event Management</li>
+                <li>✅ Kirim Email QR (SMTP)</li>
+                <li>✅ Custom Branding</li>
+                <li>✅ Source Code Full</li>
+                <li>✅ Buku Panduan Instalasi</li>
+                <li>✅ Support 1 Bulan</li>
+            </ul>
+            <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20beli%20AbsensiEvent%20PRO" target="_blank" class="btn-buy">💬 Order via WhatsApp</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        🚀 AbsensiEvent DEMO v1.0 • © 2026 HimpunanTech
+    </div>
+
+    <!-- ===== SCRIPT ===== -->
+    <script>
+    // ===== GANTI dengan URL Web App Anda =====
+    const API_BASE_URL = 'https://script.google.com/macros/s/AKfycby1SrEfmc1LZc6pYoXHwO2WtEzLRY_0tOXOMIvDVIRDReT5tzkQKkbvuzaPT35StskE/exec';
+    const MAX_PESERTA = 5;
+    const MAX_SCAN = 3;
+    
+    let pesertaData = [];
+    let scanCount = 0;
+    let html5QrCode = null;
+    let scannerActive = false;
+
+    // ===== TOAST =====
+    function showToast(msg, type) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-' + (type || 'info');
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(function(){ toast.style.opacity='0'; toast.style.transition='0.3s'; setTimeout(function(){ toast.remove(); },300); }, 3500);
+    }
+
+    // ===== API CALL =====
+    async function callAPI(action, params, method) {
+        method = method || 'GET';
+        try {
+            var url = API_BASE_URL + '?action=' + encodeURIComponent(action);
+            
+            if (method === 'GET' && params) {
+                Object.keys(params).forEach(function(key) {
+                    url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                });
+                var response = await fetch(url);
+                return await response.json();
+            } else {
+                var response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params || {})
+                });
+                return await response.json();
+            }
+        } catch(error) {
+            console.error('API Error:', error);
+            showToast('Gagal terhubung ke server', 'error');
+            return { success: false, error: error.toString() };
+        }
+    }
+
+    // ===== LOAD STATS =====
+    async function loadStats() {
+        var result = await callAPI('getStats');
+        if (result.success && result.stats) {
+            document.getElementById('stat-total').textContent = result.stats.total || 0;
+            document.getElementById('stat-hadir').textContent = result.stats.hadir || 0;
+            document.getElementById('stat-scan').textContent = result.stats.scan_count || 0;
+            document.getElementById('limit-peserta').textContent = result.stats.max_peserta || 5;
+            document.getElementById('limit-scan').textContent = result.stats.max_scan || 3;
+            document.getElementById('banner-max').textContent = result.stats.max_peserta || 5;
+            document.getElementById('banner-scan').textContent = result.stats.max_scan || 3;
+            scanCount = result.stats.scan_count || 0;
+            
+            if (result.stats.peserta_tersisa <= 0) {
+                document.getElementById('limit-peserta-warning').style.display = 'block';
+            }
+            if (result.stats.scan_tersisa <= 0) {
+                document.getElementById('limit-scan-warning').style.display = 'block';
+            }
+        }
+    }
+
+    // ===== LOAD PESERTA =====
+    async function loadPeserta() {
+        var result = await callAPI('getPeserta');
+        if (result.success) {
+            pesertaData = result.peserta || [];
+            refreshQRTable();
+            refreshAttendanceTable();
+        }
+    }
+
+    // ===== TABS =====
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            var panelId = this.dataset.tab;
+            document.getElementById(panelId).classList.add('active');
+            this.classList.add('active');
+            
+            if (panelId !== 'tab-scan') stopScanner();
+            if (panelId === 'tab-qr' || panelId === 'tab-data') {
+                loadStats();
+                loadPeserta();
+            }
+        });
+    });
+
+    // ===== REGISTRATION =====
+    document.getElementById('registration-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Cek limit dulu
+        var limitCheck = await callAPI('checkLimit', { type: 'peserta' });
+        if (limitCheck.limit_reached) {
+            document.getElementById('limit-peserta-warning').style.display = 'block';
+            showToast('Batas Demo: Maksimal ' + limitCheck.max + ' peserta!', 'warning');
+            return;
+        }
+        
+        var nama = document.getElementById('nama').value.trim();
+        var nim = document.getElementById('nim').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var jurusan = document.getElementById('jurusan').value || '-';
+        
+        if (!nama || !nim || !email) {
+            showToast('Isi Nama, NIM, dan Email!', 'warning');
+            return;
+        }
+        
+        var btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> Mendaftarkan...';
+        
+        var result = await callAPI('register', {
+            nama: nama,
+            nim: nim,
+            email: email,
+            jurusan: jurusan
+        }, 'POST');
+        
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Daftar & Generate QR';
+        
+        if (result.success && result.peserta) {
+            document.getElementById('registration-result').style.display = 'block';
+            document.getElementById('qr-code-container').innerHTML = '';
+            document.getElementById('reg-email-display').textContent = email;
+            
+            new QRCode(document.getElementById('qr-code-container'), {
+                text: result.peserta.qr_data,
+                width: 200,
+                height: 200
+            });
+            
+            this.reset();
+            document.getElementById('limit-peserta-warning').style.display = 'none';
+            showToast(result.message, 'success');
+            loadStats();
+            loadPeserta();
+            document.getElementById('registration-result').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            showToast(result.error || 'Gagal mendaftar', 'error');
+            if (result.limit_reached) {
+                document.getElementById('limit-peserta-warning').style.display = 'block';
+            }
+        }
+    });
+
+    // ===== QR TABLE =====
+    function refreshQRTable() {
+        var tbody = document.getElementById('qr-table-body');
+        if (pesertaData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">Belum ada peserta</td></tr>';
+            return;
+        }
+        tbody.innerHTML = pesertaData.map(function(p) {
+            return '<tr>' +
+                '<td><strong>' + p.nama + '</strong></td>' +
+                '<td>' + p.nim + '</td>' +
+                '<td>' + p.email + '</td>' +
+                '<td>' + (p.jurusan || '-') + '</td>' +
+                '<td><button class="btn btn-outline btn-sm btn-lihat-qr" data-qr="' + p.qr_data + '" data-nama="' + p.nama + '">👁 Lihat QR</button></td>' +
+                '</tr>';
+        }).join('');
+        
+        tbody.querySelectorAll('.btn-lihat-qr').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                showQRModal(this.dataset.qr, this.dataset.nama);
+            });
+        });
+    }
+
+    // ===== ATTENDANCE TABLE =====
+    function refreshAttendanceTable() {
+        var tbody = document.getElementById('attendance-table-body');
+        if (pesertaData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;">Belum ada data</td></tr>';
+            return;
+        }
+        tbody.innerHTML = pesertaData.map(function(p, i) {
+            var statusHTML = p.status === 'hadir' ? 
+                '<span class="status-hadir">✅ Hadir</span>' : 
+                '<span class="status-belum">⏳ Belum</span>';
+            var waktuHadir = p.waktu_hadir ? new Date(p.waktu_hadir).toLocaleString('id-ID') : '-';
+            return '<tr>' +
+                '<td>' + (i+1) + '</td>' +
+                '<td><strong>' + p.nama + '</strong></td>' +
+                '<td>' + p.nim + '</td>' +
+                '<td>' + p.email + '</td>' +
+                '<td>' + (p.jurusan || '-') + '</td>' +
+                '<td>' + statusHTML + '</td>' +
+                '<td>' + waktuHadir + '</td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    // ===== QR MODAL =====
+    function showQRModal(qrData, nama) {
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:999;display:flex;align-items:center;justify-content:center;';
+        var modal = document.createElement('div');
+        modal.style.cssText = 'background:white;border-radius:16px;padding:24px;text-align:center;max-width:350px;width:90%;';
+        modal.innerHTML = '<h3>QR Code - ' + nama + '</h3><div id="modal-qr"></div><button id="modal-close" style="margin-top:12px;padding:10px 24px;background:#6366f1;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Tutup</button>';
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        new QRCode(document.getElementById('modal-qr'), { text: qrData, width: 180, height: 180 });
+        
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay || e.target.id === 'modal-close') overlay.remove();
+        });
+    }
+
+    // ===== SCANNER =====
+    function startScanner() {
+        if (scannerActive) return;
+        if (scanCount >= MAX_SCAN) {
+            document.getElementById('limit-scan-warning').style.display = 'block';
+            showToast('Batas Demo: Maksimal ' + MAX_SCAN + 'x scan!', 'warning');
+            return;
+        }
+        document.getElementById('reader').style.display = 'block';
+        html5QrCode = new Html5Qrcode('reader');
+        html5QrCode.start(
+            { facingMode: 'environment' },
+            { fps: 10, qrbox: { width: 220, height: 220 } },
+            function(decodedText) { handleScan(decodedText); },
+            function() {}
+        ).then(function() {
+            scannerActive = true;
+            document.getElementById('btn-start-scanner').style.display = 'none';
+            document.getElementById('btn-stop-scanner').style.display = 'inline-block';
+        }).catch(function() {
+            showToast('Gagal akses kamera. Pastikan HTTPS.', 'error');
+        });
+    }
+
+    function stopScanner() {
+        if (html5QrCode && scannerActive) {
+            html5QrCode.stop().then(function() {
+                scannerActive = false;
+                document.getElementById('btn-start-scanner').style.display = 'inline-block';
+                document.getElementById('btn-stop-scanner').style.display = 'none';
+                document.getElementById('reader').style.display = 'none';
+            }).catch(function() {});
+        }
+    }
+
+    async function handleScan(decodedText) {
+        stopScanner();
+        var resultDiv = document.getElementById('scan-result');
+        resultDiv.innerHTML = '<div class="scan-result" style="background:#fef3c7;">⏳ Memproses...</div>';
+        
+        var result = await callAPI('scan', { qr_data: decodedText }, 'POST');
+        
+        if (result.success) {
+            resultDiv.innerHTML = '<div class="scan-result success">✅ ' + result.message + '</div>';
+            showToast(result.message, 'success');
+            scanCount = result.scan_info ? result.scan_info.current : scanCount + 1;
+            loadStats();
+            loadPeserta();
+            
+            if (result.scan_info && result.scan_info.sisa <= 0) {
+                document.getElementById('limit-scan-warning').style.display = 'block';
+            }
+        } else {
+            resultDiv.innerHTML = '<div class="scan-result error">❌ ' + (result.error || 'QR tidak valid') + '</div>';
+            if (result.limit_reached) {
+                document.getElementById('limit-scan-warning').style.display = 'block';
+            }
+        }
+        setTimeout(function() { resultDiv.innerHTML = ''; }, 4000);
+    }
+
+    document.getElementById('btn-start-scanner').addEventListener('click', startScanner);
+    document.getElementById('btn-stop-scanner').addEventListener('click', stopScanner);
+
+    // ===== MANUAL HADIR =====
+    document.getElementById('btn-manual-hadir').addEventListener('click', async function() {
+        var nim = document.getElementById('manual-nim').value.trim();
+        var resultDiv = document.getElementById('manual-result');
+        
+        if (!nim) {
+            resultDiv.innerHTML = '<div class="scan-result error">Masukkan NIM dulu.</div>';
+            return;
+        }
+        
+        this.disabled = true;
+        this.innerHTML = '<span class="loading"></span> Memproses...';
+        
+        var result = await callAPI('manualHadir', { nim: nim }, 'POST');
+        
+        this.disabled = false;
+        this.innerHTML = '✅ Tandai Hadir';
+        
+        if (result.success) {
+            resultDiv.innerHTML = '<div class="scan-result success">✅ ' + result.message + '</div>';
+            document.getElementById('manual-nim').value = '';
+            showToast(result.message, 'success');
+            loadStats();
+            loadPeserta();
+        } else {
+            resultDiv.innerHTML = '<div class="scan-result error">❌ ' + (result.error || 'Gagal') + '</div>';
+        }
+        setTimeout(function() { resultDiv.innerHTML = ''; }, 3000);
+    });
+
+    // ===== EXPORT (LOCKED) =====
+    document.getElementById('btn-export-csv').addEventListener('click', function() {
+        showToast('🔒 Export CSV hanya di versi PRO. Upgrade sekarang!', 'warning');
+        document.getElementById('upgrade-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ===== REFRESH =====
+    document.getElementById('btn-refresh-data').addEventListener('click', async function() {
+        this.disabled = true;
+        this.innerHTML = '<span class="loading"></span> Refreshing...';
+        await loadStats();
+        await loadPeserta();
+        this.disabled = false;
+        this.innerHTML = '🔄 Refresh';
+    });
+
+    // ===== INIT =====
+    async function init() {
+        document.getElementById('reader').style.display = 'none';
+        await loadStats();
+        await loadPeserta();
+        console.log('🚀 AbsensiEvent DEMO ready!');
+    }
+
+    init();
+    window.addEventListener('beforeunload', function() { stopScanner(); });
+    </script>
+</body>
+</html>
