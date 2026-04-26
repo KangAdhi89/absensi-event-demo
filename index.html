@@ -540,32 +540,50 @@
         setTimeout(function(){ toast.style.opacity='0'; toast.style.transition='0.3s'; setTimeout(function(){ toast.remove(); },300); }, 3500);
     }
 
-    // ===== API CALL =====
-    async function callAPI(action, params, method) {
-        method = method || 'GET';
-        try {
-            var url = API_BASE_URL + '?action=' + encodeURIComponent(action);
+   // ===== API CALL - DENGAN NO-CORS MODE =====
+async function callAPI(action, params, method) {
+    method = method || 'GET';
+    try {
+        var url = API_BASE_URL + '?action=' + encodeURIComponent(action);
+        
+        if (method === 'GET' && params) {
+            Object.keys(params).forEach(function(key) {
+                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+            });
             
-            if (method === 'GET' && params) {
-                Object.keys(params).forEach(function(key) {
-                    url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-                });
-                var response = await fetch(url);
-                return await response.json();
-            } else {
-                var response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(params || {})
-                });
-                return await response.json();
+            // GUNAKAN mode: 'no-cors' untuk GET request
+            var response = await fetch(url, {
+                method: 'GET',
+                mode: 'no-cors',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            // Karena no-cors, kita parse manual dengan response.text()
+            var text = await response.text();
+            try {
+                return JSON.parse(text);
+            } catch(e) {
+                // Fallback: coba fetch ulang dengan mode cors
+                var response2 = await fetch(url);
+                return await response2.json();
             }
-        } catch(error) {
-            console.error('API Error:', error);
-            showToast('Gagal terhubung ke server', 'error');
-            return { success: false, error: error.toString() };
+        } else {
+            // POST request
+            var response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params || {})
+            });
+            return await response.json();
         }
+    } catch(error) {
+        console.error('API Error:', error);
+        showToast('Gagal terhubung ke server. Coba refresh.', 'error');
+        return { success: false, error: error.toString() };
     }
+}
 
     // ===== LOAD STATS =====
     async function loadStats() {
